@@ -54,6 +54,22 @@ class PrimeGenControllerTest {
 	}
 	
 	@Test
+	void getPrimesWithLargeFromNumber() {
+		//Test API call with some valid parameters
+		HashMap<String, String> params = new HashMap<>();
+		params.put("number", "1000000");
+		params.put("pageNumber", "1");
+		params.put("itemsPerPage", "15");
+		ResponseEntity<ResponseData>res = testRestTemplate.getForEntity("/rest/getprimes?fromNumber={number}&pageNumber={pageNumber}&itemsPerPage={itemsPerPage}",ResponseData.class , params);
+		assertAll(
+				() -> assertEquals(HttpStatus.OK, res.getStatusCode(),"We didn't get a status code of 200"),
+				() -> assertEquals(15,res.getBody().getPrimes().size(),"Number of primes returned was not what was expected"),
+				() -> assertEquals("ok",res.getBody().getStatus(),"Status should have been 'ok'")
+				
+		);
+	}
+	
+	@Test
 	void getPrimesValidation() {
 		//Test fromNumber not being specified
 		ResponseEntity<String> res = testRestTemplate.getForEntity("/rest/getprimes?fromNumber=",String.class);
