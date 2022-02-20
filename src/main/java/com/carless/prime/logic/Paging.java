@@ -3,6 +3,11 @@ package com.carless.prime.logic;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.carless.prime.controllers.PrimeGenController;
+
 /**
  * A class that represents a single page of prime items data. This is used to capture a single page worth of prime data 
  * @author mnc
@@ -30,7 +35,7 @@ public class Paging {
 	private int primeIdx = 0;
 	
 	/**
-	 * Creates a paging object used for storing values for a given page of data.
+	 * Creates a paging object used for storing values for a given page of data with default of 10 prime numbers per page
 	 * @param requestedPage
 	 * 	Sets the page number to store page data for
 	 */
@@ -66,7 +71,7 @@ public class Paging {
 	 * Every attempt to store a data item value increments an internal index. If the index number of the prime data item
 	 * being added falls within the upper and lower bounds it is added to the list of items representing a page.
 	 * @param prime
-	 * 	The value to attempt to store. 
+	 * 	The value to store. 
 	 * @return
 	 *  Returns a -1 if the value being added is below the lowerBound index of the page, 1 if the index 
 	 *  is above the upperBound index of the page and 0 if the value being added falls within our page.
@@ -79,16 +84,13 @@ public class Paging {
 			return -1;
 		}
 		
-		if ( (primeIdx >= lowerBound) && (primeIdx <= upperBound) ) {
-			pageItems.add(prime);
-			return 0;
-		}
-		
 		if (primeIdx > upperBound) {
 			return 1;
 		}
 		
-		return -99;
+		pageItems.add(prime);
+		return 0;
+		
 	}
 	
 	/**
