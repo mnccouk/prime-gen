@@ -17,14 +17,13 @@ import com.carless.prime.data.ResponseData;
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class PrimeGenControllerTest {
+class PrimeGenControllerTest {
 	
 	@Autowired
 	private TestRestTemplate testRestTemplate;
 	
 	@Test
-	//
-	public void getPrimesWithPage() {
+    void getPrimesWithPage() {
 		//Test API call with some valid parameters
 		HashMap<String, String> params = new HashMap<>();
 		params.put("number", "50");
@@ -40,8 +39,7 @@ public class PrimeGenControllerTest {
 	}
 	
 	@Test
-	//
-	public void getPrimesWithoutPage() {
+	void getPrimesWithoutPage() {
 		//Test API call with some valid parameters
 		HashMap<String, String> params = new HashMap<>();
 		params.put("number", "100");
@@ -56,7 +54,7 @@ public class PrimeGenControllerTest {
 	}
 	
 	@Test
-	public void getPrimesValidation() {
+	void getPrimesValidation() {
 		//Test fromNumber not being specified
 		ResponseEntity<String> res = testRestTemplate.getForEntity("/rest/getprimes?fromNumber=",String.class);
 		assertEquals(HttpStatus.BAD_REQUEST, res.getStatusCode(),"We didn't get a status code of 400");	
@@ -81,15 +79,6 @@ public class PrimeGenControllerTest {
 		res = testRestTemplate.getForEntity("/rest/getprimes?fromNumber=100&pageNumber=1&itemsPerPage=5.5",String.class);
 		assertEquals(HttpStatus.BAD_REQUEST, res.getStatusCode(),"We didn't get a status code of 400");	
 		assertEquals(true, res.getBody().contains("whole") & res.getBody().contains("itemsPerPage"));
-				
-		//Test  max value
-		//res = testRestTemplate.getForEntity("/rest/getprimes?fromNumber=2147483648",String.class);
-		//assertEquals(HttpStatus.BAD_REQUEST, res.getStatusCode(),"We didn't get a status code of 400");	
-		//assertEquals(true, res.getBody().contains("maximum"));
-
-		
-		
-		
-		
+						
 	}
 }

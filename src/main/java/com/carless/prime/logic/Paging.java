@@ -3,10 +3,6 @@ package com.carless.prime.logic;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.carless.prime.controllers.PrimeGenController;
 
 /**
  * A class that represents a single page of prime items data. This is used to capture a single page worth of prime data 
@@ -29,7 +25,7 @@ public class Paging {
 	private int requestedPage;
 	
 	/*List holding the Prime numbers to retbe urned for the requested page*/
-	private List<Integer> pageItems = new ArrayList<Integer>();
+	private List<Integer> pageItems = new ArrayList<>();
 	
 	/*Holds the current index number of the prime being added*/
 	private int primeIdx = 0;

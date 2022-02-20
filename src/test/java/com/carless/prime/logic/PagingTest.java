@@ -85,7 +85,7 @@ class PagingTest {
 		paging = populatePageItems(5,20);
 		page2Items.clear();
 		page2Items = paging.getPageData();
-		assertEquals(page2Items.size(), 0);
+		assertEquals(0,page2Items.size());
 	}
 	
 	@Test
@@ -105,7 +105,7 @@ class PagingTest {
 		paging = populatePageItems(4,100,15);
 		page2Items.clear();
 		page2Items = paging.getPageData();
-		assertEquals(page2Items.size(), 15);
+		assertEquals(15,page2Items.size());
 		assertEquals(true, page2Items.contains(46));
 		assertEquals(true, page2Items.contains(51));
 		assertEquals(true, page2Items.contains(60));
@@ -116,7 +116,7 @@ class PagingTest {
 		paging = populatePageItems(5,10,15);
 		page2Items.clear();
 		page2Items = paging.getPageData();
-		assertEquals(page2Items.size(), 0);
+		assertEquals(0,page2Items.size());
 	
 	}
 	
