@@ -28,7 +28,7 @@ import com.carless.prime.logic.PrimeCalc;
 @RestController
 @Validated
 public class PrimeGenController {
-	
+
 	Logger logger = LoggerFactory.getLogger(PrimeGenController.class);
 
 	@GetMapping("/rest/getprimes")
@@ -40,8 +40,9 @@ public class PrimeGenController {
 		// Setup new ResonseData object that will hold the data to be returned from this
 		// call.
 		ResponseData responseData = new ResponseData();
-		logger.debug("Entered getPrimes API call with params - fromNumber:{} pageNumber:{} itemsPerPage:{}", fromNumberStr,pageNumber,itemsPerPage);
-		
+		logger.debug("Entered getPrimes API call with params - fromNumber:{} pageNumber:{} itemsPerPage:{}",
+				fromNumberStr, pageNumber, itemsPerPage);
+
 		int fromNumber = Integer.valueOf(fromNumberStr);
 
 		int getPrimeFromHere = 2; // Start at the first prime number
@@ -50,19 +51,21 @@ public class PrimeGenController {
 		IPrimes primeCalc = new PrimeCalc();
 		while (getPrimeFromHere <= fromNumber) { // Only process up to our target number
 			int nextPrime = primeCalc.nextPrime(getPrimeFromHere);
-			if (nextPrime <= fromNumber) { // Make sure the prime just found is only added if less than or equal to.
-				if (page.addPrime(nextPrime) == 1) {
+			if (nextPrime <= fromNumber) { // Make sure the prime just found is only added if less than or equal to our
+											// target (fromNumber) value, as that is the requirement.
+				if (page.addPrime(nextPrime) == 1) { // check to see if we have populated our page with data.
 					logger.debug("Filled the requested page with data so bailing out of loop");
 					break; // if the current value being added falls above the upperBound of the page index
-							// break out the loop because we are done for now.
-					
+							// break out the loop because we are done for now, lets reserves some cpu cycles
+							// for something else..
 				}
 			}
 			getPrimeFromHere = nextPrime + 1; // jump to the prime just found and add 1 ready for next attempt
 		}
+		// Load our response object with our page or data.
 		responseData.setPrimes(page.getPageData());
 		responseData.setStatus("ok");
-		return ResponseEntity.ok(responseData); // return the data back to the user.
+		return ResponseEntity.ok(responseData); // return the data back to the calling client.
 	}
 
 	@ExceptionHandler(ConstraintViolationException.class)

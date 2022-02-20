@@ -9,8 +9,10 @@ import java.util.List;
  *
  */
 public class ResponseData {
-	
+	//List of Prime Numbers
 	private List<Integer> primes;
+	
+	//
 	private String status;
 	private String msg;
 	
