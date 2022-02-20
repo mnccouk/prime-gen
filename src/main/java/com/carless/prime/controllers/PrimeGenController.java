@@ -1,9 +1,5 @@
 package com.carless.prime.controllers;
 
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import javax.validation.ConstraintViolationException;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -43,7 +39,7 @@ public class PrimeGenController {
 		logger.debug("Entered getPrimes API call with params - fromNumber:{} pageNumber:{} itemsPerPage:{}",
 				fromNumberStr, pageNumber, itemsPerPage);
 
-		int fromNumber = Integer.valueOf(fromNumberStr);
+		int fromNumber = Integer.parseInt(fromNumberStr);
 
 		int getPrimeFromHere = 2; // Start at the first prime number
 		Paging page = new Paging(Integer.valueOf(pageNumber), Integer.valueOf(itemsPerPage));
@@ -70,7 +66,10 @@ public class PrimeGenController {
 
 	@ExceptionHandler(ConstraintViolationException.class)
 	@ResponseStatus(code = HttpStatus.BAD_REQUEST)
-	ResponseEntity<String> handleConstraintViolationException(ConstraintViolationException e) {
-		return new ResponseEntity<>("Validation error: " + e.getMessage(), HttpStatus.BAD_REQUEST);
+	ResponseEntity<ResponseData> handleConstraintViolationException(ConstraintViolationException e) {
+		ResponseData responseData = new ResponseData();
+		responseData.setMsg("Validation error: " + e.getMessage());
+		responseData.setStatus("error");
+		return new ResponseEntity<>(responseData, HttpStatus.BAD_REQUEST);
 	}
 }
