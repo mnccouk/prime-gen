@@ -20,7 +20,7 @@ If all goes well, you should see a 'BUILD SUCCESSFUL' message. Further details o
 
 Code coverage reports can be found at - /build/reports/jacoco/test/html/index.html
 
-###Building
+### Building
 
 From the 'prime-gen' folder execute
 ```bash
@@ -28,7 +28,7 @@ From the 'prime-gen' folder execute
 ```
 If the build is successful, this command will create a runnable jar file in the ./build/libs folder named prime-number-generator-1.0.jar.
 
-##Running the Prime Generator API
+### Running the Prime Generator API
 After running a build, as noted above, navigate to the ./build/libs directory and execute
 ```bash
 java -jar prime-number-generator-1.0.jar
@@ -36,7 +36,7 @@ java -jar prime-number-generator-1.0.jar
 A few messages should scroll up as the application starts. Once complete the final message should say - 'Started PrimeNumberGeneratorApplication', with this, the application can now be used.
 
 
-##The REST API 
+### The REST API 
 
 This application supports OPEN API Definition where documentation can be found for the REST API served out by this application. This can be accessed using the following URL. - http://localhost:8080/swagger-ui/index.html. Please ensure the application has started before trying to access the above URL.
 
