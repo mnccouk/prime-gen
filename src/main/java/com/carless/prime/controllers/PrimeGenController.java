@@ -7,6 +7,7 @@ import javax.validation.constraints.NotBlank;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -20,6 +21,7 @@ import com.carless.prime.data.ResponseData;
 import com.carless.prime.logic.IPrimes;
 import com.carless.prime.logic.Paging;
 import com.carless.prime.logic.PrimeCalc;
+import com.carless.prime.logic.PrimeIndex;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -33,17 +35,17 @@ public class PrimeGenController {
 
 	Logger logger = LoggerFactory.getLogger(PrimeGenController.class);
 
-	@Operation(summary = "Generates a list of prime numbers that are less than or equal to the fromNumber parameter.")
-	@ApiResponses(value = { 
-			  @ApiResponse(responseCode = "200", description = "Lists prime numbers", 
-			    content = { @Content(mediaType = "application/json", 
-			      schema = @Schema(implementation = ResponseData.class)) }),
-			  @ApiResponse(responseCode = "400", description = "One or more invalid parameters supplied", 
-			    content = @Content)})
-	@GetMapping("/rest/getprimes")
+	@Autowired
+	PrimeIndex primeIndex;
 
+	@Operation(summary = "Generates a list of prime numbers that are less than or equal to the fromNumber parameter.")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Lists prime numbers", content = {
+					@Content(mediaType = "application/json", schema = @Schema(implementation = ResponseData.class)) }),
+			@ApiResponse(responseCode = "400", description = "One or more invalid parameters supplied", content = @Content) })
+	@GetMapping("/rest/getprimes")
 	public ResponseEntity<ResponseData> getPrimes(
-			
+
 			@Parameter(description = "The numerical input for which to return prime numbers that are less than or equal to this number") @RequestParam(value = "fromNumber") @NotBlank(message = "is a required value, please supply a value for this parameter") @Min(message = "minimum value to list primes from must be greater then 1", value = 2) @Max(message = "The maximum value this parameter can be set to is 2147483647", value = 2147483647) @javax.validation.constraints.Pattern(regexp = "^[0-9]*$", message = "Must be specified as a numeric whole value") String fromNumberStr,
 			@Parameter(description = "The page number for which to return prime numbers for. This is optional but defaults to 1 if not supplied") @RequestParam(value = "pageNumber", defaultValue = "1") @Max(message = "The maximum value this parameter can be set to is 2147483647", value = 2147483647) @javax.validation.constraints.Pattern(regexp = "^[0-9]*$", message = "Must be specified as a numeric whole value") String pageNumber,
 			@Parameter(description = "The number of prime numbers to return on each page. This is optional but will default to max int (2147483647). ") @RequestParam(value = "itemsPerPage", defaultValue = "2147483647") @Min(message = "Has a minimum value of 10", value = 10) @Max(message = "The maximum value this parameter can be set to is 2147483647", value = 2147483647) @javax.validation.constraints.Pattern(regexp = "^[0-9]*$", message = "Must be specified as a numeric whole value") String itemsPerPage) {
@@ -56,8 +58,21 @@ public class PrimeGenController {
 
 		int fromNumber = Integer.parseInt(fromNumberStr);
 
-		int getPrimeFromHere = 2; // Start at the first prime number
+
 		Paging page = new Paging(Integer.valueOf(pageNumber), Integer.valueOf(itemsPerPage));
+
+		// If the client requested a large primeNumber together with a high page number
+		// it could take a while to process through all the prime numbers
+		// up to the point we need data for the page. Instead lookup a primeNumber from an index so as
+		// we can jump to that point.
+		// This will minimise time for processing requests with large
+		// fromNumbers\pageNumbers
+		int startIdxAtPage = (Integer.valueOf(pageNumber) * Integer.valueOf(itemsPerPage))
+				- Integer.valueOf(itemsPerPage) + 1;
+		
+		PrimeIndex.PrimeIdxData primeIdxData = primeIndex.findCloseIndexLocation(startIdxAtPage);
+		page.setPrimeIdx(primeIdxData.getIndexLoc()-1);
+		int getPrimeFromHere = primeIdxData.getPrime(); //Start at the prime number found from the index
 
 		IPrimes primeCalc = new PrimeCalc();
 		while (getPrimeFromHere <= fromNumber) { // Only process up to our target number

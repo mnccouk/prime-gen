@@ -106,4 +106,8 @@ public class Paging {
 		return primesPerPage;
 	}
 
+	public void setPrimeIdx(int primeIdx) {
+		this.primeIdx = primeIdx;
+	}
+
 }

@@ -33,7 +33,9 @@ class PrimeGenControllerTest {
 		assertAll(
 				() -> assertEquals(HttpStatus.OK, res.getStatusCode(),"We didn't get a status code of 200"),
 				() -> assertEquals(15,res.getBody().getPrimes().size(),"Number of primes returned was not what was expected"),
-				() -> assertEquals("ok",res.getBody().getStatus(),"Status should have been 'ok'")
+				() -> assertEquals("ok",res.getBody().getStatus(),"Status should have been 'ok'"),
+				() -> assertEquals(2,res.getBody().getPrimes().get(0),"Should have recieved Prime number of 2"),
+				() -> assertEquals(47,res.getBody().getPrimes().get(14),"Should have recieved Prime number of 47")
 				
 		);
 	}
@@ -65,6 +67,24 @@ class PrimeGenControllerTest {
 				() -> assertEquals(HttpStatus.OK, res.getStatusCode(),"We didn't get a status code of 200"),
 				() -> assertEquals(15,res.getBody().getPrimes().size(),"Number of primes returned was not what was expected"),
 				() -> assertEquals("ok",res.getBody().getStatus(),"Status should have been 'ok'")
+				
+		);
+	}
+	
+	@Test
+	void getPrimesWithLargeFromNumberAndPageNumber() {
+		//Test API call with some valid parameters
+		HashMap<String, String> params = new HashMap<>();
+		params.put("number", "2145390523");
+		params.put("pageNumber", "1050000");
+		params.put("itemsPerPage", "100");
+		ResponseEntity<ResponseData>res = testRestTemplate.getForEntity("/rest/getprimes?fromNumber={number}&pageNumber={pageNumber}&itemsPerPage={itemsPerPage}",ResponseData.class , params);
+		assertAll(
+				() -> assertEquals(HttpStatus.OK, res.getStatusCode(),"We didn't get a status code of 200"),
+				() -> assertEquals(100,res.getBody().getPrimes().size(),"Number of primes returned was not what was expected"),
+				() -> assertEquals("ok",res.getBody().getStatus(),"Status should have been 'ok'"),
+				() -> assertEquals(2145388261,res.getBody().getPrimes().get(0),"Should have recieved Prime number of 2145388261"),
+				() -> assertEquals(2145390523,res.getBody().getPrimes().get(99),"Should have recieved Prime number of 2145390523")
 				
 		);
 	}

@@ -40,5 +40,15 @@ A few messages should scroll up as the application starts. Once complete the fin
 
 This application supports OPEN API Definition where documentation can be found for the REST API served out by this application. This can be accessed using the following URL. - http://localhost:8080/swagger-ui/index.html. Please ensure the application has started before trying to access the above URL.
 
+This provides details on the API specification and also can be used by a client to generate Client side code using Open API client utilities.
+
+###Limitations
+Prime numbers are generated in the range of 32 bit signed integer, this gives us a max value of 2147483647 for the fromNumber value.
+If no page is specified and a large number is used for the 'fromNumber' parameter returning the results will take a long while.
+Performance gain could be achieved by creating a more fine grained index file(idx.dat).  
+
+
+ 
+
 
 
