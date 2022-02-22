@@ -20,7 +20,7 @@ class PrimeIndexTest {
 	@Test
 	void testLoadIndex() {
 		SortedMap<Integer, Integer> primeIndexMap = primeIndex.loadIndex();
-		assertEquals(106, primeIndexMap.size());
+		assertEquals(1051, primeIndexMap.size());
 	}
 	
   @Test
