@@ -38,7 +38,7 @@ public class PrimeGenController {
 	@Autowired
 	PrimeIndex primeIndex;
 
-	@Operation(summary = "Generates a list of prime numbers that are less than or equal to the fromNumber parameter.")
+	@Operation(summary = "Generates a list of prime numbers that are less than or equal to the fromNumber parameter.") //Open API Doc
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "Lists prime numbers", content = {
 					@Content(mediaType = "application/json", schema = @Schema(implementation = ResponseData.class)) }),
@@ -47,7 +47,7 @@ public class PrimeGenController {
 	public ResponseEntity<ResponseData> getPrimes(
 
 			@Parameter(description = "The numerical input for which to return prime numbers that are less than or equal to this number") @RequestParam(value = "fromNumber") @NotBlank(message = "is a required value, please supply a value for this parameter") @Min(message = "minimum value to list primes from must be greater then 1", value = 2) @Max(message = "The maximum value this parameter can be set to is 2147483647", value = 2147483647) @javax.validation.constraints.Pattern(regexp = "^[0-9]*$", message = "Must be specified as a numeric whole value") String fromNumberStr,
-			@Parameter(description = "The page number for which to return prime numbers for. This is optional but defaults to 1 if not supplied") @RequestParam(value = "pageNumber", defaultValue = "1") @Max(message = "The maximum value this parameter can be set to is 2147483647", value = 2147483647) @javax.validation.constraints.Pattern(regexp = "^[0-9]*$", message = "Must be specified as a numeric whole value") String pageNumber,
+			@Parameter(description = "The page number for which to return prime numbers for. This is optional but defaults to 1 if not supplied") @RequestParam(value = "pageNumber", defaultValue = "1") @Min(message = "minimum value must is 1", value = 1) @Max(message = "The maximum value this parameter can be set to is 2147483647", value = 2147483647) @javax.validation.constraints.Pattern(regexp = "^[0-9]*$", message = "Must be specified as a numeric whole value") String pageNumber,
 			@Parameter(description = "The number of prime numbers to return on each page. This is optional but will default to max int (2147483647). ") @RequestParam(value = "itemsPerPage", defaultValue = "2147483647") @Min(message = "Has a minimum value of 10", value = 10) @Max(message = "The maximum value this parameter can be set to is 2147483647", value = 2147483647) @javax.validation.constraints.Pattern(regexp = "^[0-9]*$", message = "Must be specified as a numeric whole value") String itemsPerPage) {
 
 		// Setup new ResonseData object that will hold the data to be returned from this
