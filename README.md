@@ -35,12 +35,27 @@ java -jar prime-number-generator-1.0.jar
 ```
 A few messages should scroll up as the application starts. Once complete the final message should say - 'Started PrimeNumberGeneratorApplication', with this, the application can now be used.
 
+In your web browser navigate to http://localhost:8080/. The frontend should be displayed in the browser.
+
+### Running as a Docker container
+From within the project root directory run
+```bash
+./gradlew dockerRun
+```
+The above command will compile, test and deploy frontend and backend into a Docker image. The image will also be used to create and start a Docker container. The Docker container is configured to run on port 8080 so ensure this port is free before executing the above command.
+
+In your web browser navigate to http://localhost:8080/. The frontend should be displayed and application ready to use.
+![](images/AppImage.png)
+
 
 ### The REST API 
+The application supports OPEN API Definition where documentation can be found for the REST API served out by this application. The documentation can be accessed using the following URL. - http://localhost:8080/swagger-ui/index.html. Please ensure the application has started before trying to access the above URL.
 
-This application supports OPEN API Definition where documentation can be found for the REST API served out by this application. This can be accessed using the following URL. - http://localhost:8080/swagger-ui/index.html. Please ensure the application has started before trying to access the above URL.
+Below screenshot shows API documentation of the single REST call exposed by this application.
+![](images/OpenAPI.png)
 
-This provides details on the API specification and also can be used by a client to generate Client side code using Open API client utilities.
+The API specification and also can be used by a client to auto generate Client side code using Open API client utilities. JSON specification can be referenced using - http://localhost:8080/api-docs
+
 
 ### Limitations
 Prime numbers are generated in the range of 32 bit signed integer, this gives us a max value of 2147483647 for the fromNumber value.
