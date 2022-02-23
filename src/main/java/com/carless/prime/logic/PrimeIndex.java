@@ -1,7 +1,7 @@
 package com.carless.prime.logic;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
+import java.io.InputStreamReader;
 import java.util.SortedMap;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
@@ -54,7 +54,7 @@ public class PrimeIndex {
 	public SortedMap<Integer, Integer> loadIndex() {
 		if (primeIndexMap.isEmpty()) {
 			logger.debug("Loading Prime index from the {}", resourceFile.getFilename());
-			try (BufferedReader br = new BufferedReader(new FileReader(resourceFile.getFile()))) {
+			try (BufferedReader br = new BufferedReader(new InputStreamReader(resourceFile.getInputStream()))) {
 				String line;
 				while ((line = br.readLine()) != null) {
 					StringTokenizer st = new StringTokenizer(line, ":");
