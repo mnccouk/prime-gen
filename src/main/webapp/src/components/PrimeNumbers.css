@@ -1,0 +1,17 @@
+form{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  input{
+    margin: 0.5rem 0;
+    padding: 0.4rem;
+    outline: none;
+  }
+
+  label{
+    margin: 0.5rem 0;
+    padding: 0.4rem;
+    outline: none; 
+  }
