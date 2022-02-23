@@ -29,6 +29,11 @@ import io.swagger.v3.oas.annotations.responses.*;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 
+/**
+ * REST Prime controller responsible for handling incoming http requests to service prime number generation.
+ * @author mnc
+ *
+ */
 @RestController
 @Validated
 public class PrimeGenController {
