@@ -3,7 +3,10 @@ plugins {
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 	id 'java'
 	id 'jacoco'
-	id "com.github.node-gradle.node" version "3.0.1"
+	id 'com.palantir.docker' version '0.32.0'
+	id 'com.palantir.docker-run' version '0.32.0'
+	id 'com.github.node-gradle.node' version '3.0.1'
+	
 }
 
 group = 'com.carless.prime'
@@ -18,15 +21,16 @@ allprojects{
 
 node {
 	download = true
-	
     version = '14.18.0'
     
     // Set the work directory for unpacking node
-  workDir = file("${project.buildDir}/nodejs")
+  	workDir = file("${project.buildDir}/nodejs")
 
-  // Set the work directory for NPM
-  npmWorkDir = file("${project.buildDir}/npm")
+  	// Set the work directory for NPM
+  	npmWorkDir = file("${project.buildDir}/npm")
 }
+
+
 
 task appNpmInstall(type: NpmTask) {
   description = "Installs all dependencies from package.json"
@@ -45,9 +49,19 @@ task copyWebApp(type: Copy) {
   into 'build/resources/main/static/.'
 }
 
-appNpmBuild.dependsOn appNpmInstall
-copyWebApp.dependsOn appNpmBuild
-compileJava.dependsOn copyWebApp
+//Docker config for building the docker image
+docker {
+     name "${project.name}:${project.version}"
+     files "build/libs/prime-number-generator-${project.version}.jar"
+}
+
+//Docker config for running the image
+dockerRun {
+    name "${project.name}"
+    image "${project.name}:${project.version}"
+    ports '8080:8080'
+    clean true //removes the docker container on shutdown
+}
 
 dependencies {
 	
@@ -66,6 +80,12 @@ tasks.named('test') {
 test {
     finalizedBy jacocoTestReport // report is always generated after tests run
 }
+
 jacocoTestReport {
     dependsOn test // tests are required to run before generating the report
 }
+
+tasks.dockerRun.dependsOn 'docker'
+appNpmBuild.dependsOn appNpmInstall
+copyWebApp.dependsOn appNpmBuild
+compileJava.dependsOn copyWebApp
