@@ -38,9 +38,12 @@ A few messages should scroll up as the application starts. Once complete the fin
 
 ### The REST API 
 
-This application supports OPEN API Definition where documentation can be found for the REST API served out by this application. This can be accessed using the following URL. - http://localhost:8080/swagger-ui/index.html. Please ensure the application has started before trying to access the above URL.
+This application supports OPEN API Definition where documentation can be found for the REST API served out by this application. The documentation can be accessed using the following URL. - http://localhost:8080/swagger-ui/index.html. Please ensure the application has started before trying to access the above URL.
 
-This provides details on the API specification and also can be used by a client to generate Client side code using Open API client utilities.
+![](images/OpenAPI.png)
+
+This provides details on the API specification and also can be used by a client to generate Client side code using Open API client utilities. JSON specification can be referenced using - http://localhost:8080/api-docs
+
 
 ### Limitations
 Prime numbers are generated in the range of 32 bit signed integer, this gives us a max value of 2147483647 for the fromNumber value.
