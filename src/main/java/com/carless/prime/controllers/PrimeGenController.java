@@ -1,10 +1,16 @@
 package com.carless.prime.controllers;
 
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
+
 import javax.validation.ConstraintViolationException;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 
+import org.apache.commons.math3.primes.Primes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,9 +24,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.carless.prime.data.ResponseData;
-import com.carless.prime.logic.IPrimes;
-import com.carless.prime.logic.Paging;
-import com.carless.prime.logic.PrimeCalc;
 import com.carless.prime.logic.PrimeIndex;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -30,7 +33,9 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
- * REST Prime controller responsible for handling incoming http requests to service prime number generation.
+ * REST Prime controller responsible for handling incoming http requests to
+ * service prime number generation.
+ * 
  * @author mnc
  *
  */
@@ -43,7 +48,9 @@ public class PrimeGenController {
 	@Autowired
 	PrimeIndex primeIndex;
 
-	@Operation(summary = "Generates a list of prime numbers that are less than or equal to the fromNumber parameter.") //Open API Doc
+	@Operation(summary = "Generates a list of prime numbers that are less than or equal to the fromNumber parameter.") // Open
+																														// API
+																														// Doc
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "Lists prime numbers", content = {
 					@Content(mediaType = "application/json", schema = @Schema(implementation = ResponseData.class)) }),
@@ -63,38 +70,25 @@ public class PrimeGenController {
 
 		int fromNumber = Integer.parseInt(fromNumberStr);
 
-
-		Paging page = new Paging(Integer.valueOf(pageNumber), Integer.valueOf(itemsPerPage));
-
 		// If the client requested a large primeNumber together with a high page number
 		// it could take a while to process through all the prime numbers
-		// up to the point we need data for the page. Instead lookup a primeNumber from an index so as
+		// up to the point we need data for the page. Instead lookup a primeNumber from
+		// an index so as
 		// we can jump to that point.
 		// This will minimise time for processing requests with large
 		// fromNumbers\pageNumbers
 		int startIdxAtPage = (Integer.valueOf(pageNumber) * Integer.valueOf(itemsPerPage))
 				- Integer.valueOf(itemsPerPage) + 1;
-		
-		PrimeIndex.PrimeIdxData primeIdxData = primeIndex.findCloseIndexLocation(startIdxAtPage);
-		page.setPrimeIdx(primeIdxData.getIndexLoc()-1);
-		int getPrimeFromHere = primeIdxData.getPrime(); //Start at the prime number found from the index
 
-		IPrimes primeCalc = new PrimeCalc();
-		while (getPrimeFromHere <= fromNumber) { // Only process up to our target number
-			int nextPrime = primeCalc.nextPrime(getPrimeFromHere);
-			if (nextPrime <= fromNumber) { // Make sure the prime just found is only added if less than or equal to our
-											// target (fromNumber) value, as that is the requirement.
-				if (page.addPrime(nextPrime) == 1) { // check to see if we have populated our page with data.
-					logger.debug("Filled the requested page with data so bailing out of loop");
-					break; // if the current value being added falls above the upperBound of the page index
-							// break out the loop because we are done for now, lets reserves some cpu cycles
-							// for something else..
-				}
-			}
-			getPrimeFromHere = nextPrime + 1; // jump to the prime just found and add 1 ready for next attempt
-		}
-		// Load our response object with our page or data.
-		responseData.setPrimes(page.getPageData());
+		PrimeIndex.PrimeIdxData primeIdxData = primeIndex.findCloseIndexLocation(startIdxAtPage);
+		int getPrimeFromHere = primeIdxData.getPrime(); // Start at the prime number found from the index
+
+		Stream<Integer> in = IntStream.rangeClosed(getPrimeFromHere, fromNumber).filter(Primes::isPrime).boxed();
+		List<Integer> primeList = in.skip(startIdxAtPage - primeIdxData.getIndexLoc())
+				.limit(Integer.valueOf(itemsPerPage)).collect(Collectors.toList());
+
+		responseData.setPrimes(primeList);
+
 		responseData.setStatus("ok");
 		return ResponseEntity.ok(responseData); // return the data back to the calling client.
 	}
