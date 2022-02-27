@@ -28,9 +28,10 @@ import com.carless.prime.logic.PrimeIndex;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.responses.*;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
 /**
  * REST Prime controller responsible for handling incoming http requests to
@@ -83,9 +84,12 @@ public class PrimeGenController {
 		PrimeIndex.PrimeIdxData primeIdxData = primeIndex.findCloseIndexLocation(startIdxAtPage);
 		int getPrimeFromHere = primeIdxData.getPrime(); // Start at the prime number found from the index
 
-		Stream<Integer> in = IntStream.rangeClosed(getPrimeFromHere, fromNumber).filter(Primes::isPrime).boxed();
-		List<Integer> primeList = in.skip(startIdxAtPage - primeIdxData.getIndexLoc())
-				.limit(Integer.valueOf(itemsPerPage)).collect(Collectors.toList());
+		Stream<Integer> in = IntStream.rangeClosed(getPrimeFromHere, fromNumber).filter(Primes::isPrime).boxed(); // Stream of prime numbers, using index as start point and fromNumber as limit
+																													
+		List<Integer> primeList = in.skip(startIdxAtPage - primeIdxData.getIndexLoc()) // Move to the index at the start
+																						// of the page
+				.limit(Integer.valueOf(itemsPerPage)).collect(Collectors.toList()); // Only return the amount of Prime
+																					// numbers for a page worth of data.
 
 		responseData.setPrimes(primeList);
 
